@@ -22,7 +22,7 @@ El proyecto se organiza en dos directorios principales para separar el código fu
 
 ### Dependencias
 
-Para compilar y ejecutar este proyecto, necesitas tener instaladas las siguientes herramientas:
+Para compilar y ejecutar este proyecto, se usaron las siguientes herramientas:
 
 -   **Compilador de C++**: Un compilador compatible con C++17, como GCC o Visual C++.
 -   **SWIG**: Se utiliza para generar el código de acoplamiento (*wrapper*) entre C++ y Python.
