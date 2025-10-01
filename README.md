@@ -60,14 +60,52 @@ Para ver un ejemplo práctico de cómo se usan estas funciones, puedes ejecutar 
 python test_usage.py
 ```
 
-### Comparación de ejecución Python vs C++
+## Parámetros del Modelo
 
-| Implementación      | Algoritmo | Resultado         | Tiempo (ms) |
-|---------------------|-----------|------------------|-------------|
-| **Python puro**     | Forward   | logP = -58.278498 | 0.166       |
-| **Python puro**     | Viterbi   | len = 42          | 0.230       |
-| **C++/SWIG**        | Forward   | logP = -15.327346 | 0.020       |
-| **C++/SWIG**        | Viterbi   | len = 11          | 0.014       |
+El modelo utiliza los parámetros especificados en el taller:
 
-- ⚠️ Nota: Las diferencias en los valores de `logP` y la longitud de la secuencia (`len`) se deben a que los scripts usan **parámetros de modelo y secuencias distintas**.  
-- Lo importante para el análisis es la **diferencia de tiempos**, donde la versión en **C++/SWIG** resulta significativamente más rápida que la implementación en **Python puro**.
+**Estados**: `H` (High GC) y `L` (Low GC)
+
+**Probabilidades iniciales**: `[0.5, 0.5]`
+
+### Matriz de transición A
+
+```
+H→H: 0.5    H→L: 0.5
+L→H: 0.4    L→L: 0.6
+```
+
+### Matriz de emisión B
+
+```
+Estado H: A=0.2, C=0.3, G=0.3, T=0.2
+Estado L: A=0.3, C=0.2, G=0.2, T=0.3
+```
+
+---
+
+## Comparación de Rendimiento: Python vs C++
+
+Resultados con secuencia `"GGCACTGAA"`
+
+| Implementación | Algoritmo      | Resultado          | Tiempo (ms) | Speedup |
+| -------------- | -------------- | ------------------ | ----------- | ------- |
+| Python puro    | Evaluación     | logP = -12.482876  | 0.205       | 1x      |
+| C++/SWIG       | Evaluación     | logP = -12.482876  | 0.084       | 2.44x   |
+| Python puro    | Reconocimiento | Estados: HHHLLLLLL | 0.114       | 1x      |
+| C++/SWIG       | Reconocimiento | Estados: HHHLLLLLL | 0.059       | 1.93x   |
+
+---
+
+## Análisis de Regiones Identificadas
+
+* **Región H (High GC)**: Posiciones 0–2 (3 nucleótidos)
+* **Región L (Low GC)**: Posiciones 3–8 (6 nucleótidos)
+
+---
+
+## Conclusiones de Rendimiento
+
+* ✅ **Resultados idénticos**: Ambas implementaciones producen los mismos valores numéricos.
+* ✅ **C++ más rápido**: La versión C++/SWIG es 2.44x más rápida en evaluación y 1.93x más rápida en reconocimiento.
+* ✅ **Validación científica**: Comparación válida usando los mismos parámetros y la misma secuencia.
