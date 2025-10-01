@@ -48,17 +48,36 @@ def viterbi(seq, pi, A, B):
     return path, best
 
 if __name__ == "__main__":
-    pi = [0.5, 0.5]
-    A  = [[0.95,0.05],[0.05,0.95]]
-    B  = [[0.30,0.20,0.20,0.30],[0.20,0.30,0.30,0.20]]
-    seq = "ATGCGTACGTTACGCGCGTTTACGCGCGCGTATATATAGCGC"
+    # PARAMETROS
+    pi = [0.5, 0.5]  # [H, L]
+    A  = [[0.5, 0.5],   # H -> [H, L]
+          [0.4, 0.6]]   # L -> [H, L]
+    B  = [[0.2, 0.3, 0.3, 0.2],  # H: [A, C, G, T]
+          [0.3, 0.2, 0.2, 0.3]]  # L: [A, C, G, T]
+    
+    seq = "GGCACTGAA"
+    
+    print("--- PYTHON PURO ---")
+    print(f"Secuencia: {seq}")
 
+    # EVALUACION
     t0 = time.perf_counter()
     lp = forward_log_prob(seq, pi, A, B)
     t1 = time.perf_counter()
-    print(f"[PurePy] logP = {lp:.6f} (time: {(t1-t0)*1e3:.3f} ms)")
+    print(f"\n[PurePy] Evaluacion - logP = {lp:.6f} (time: {(t1-t0)*1e3:.3f} ms)")
 
+    # RECONOCIMIENTO
     t0 = time.perf_counter()
-    path, vlp = viterbi(seq, pi, A, B)
+    path_numeric, vlp = viterbi(seq, pi, A, B)
     t1 = time.perf_counter()
-    print(f"[PurePy] Viterbi len={len(path)} time: {(t1-t0)*1e3:.3f} ms")
+    
+    # Convertir a etiquetas
+    path_labels = ['H' if s == 0 else 'L' for s in path_numeric]
+    
+    print(f"[PurePy] Reconocimiento - Tiempo: {(t1-t0)*1e3:.3f} ms")
+    print(f"Secuencia ADN:    {seq}")
+    print(f"Estados predichos: {''.join(path_labels)}")
+    print(f"Estados numericos: {path_numeric}")
+    
+    # Validacion
+    print(f"\n[Validacion] Diferencia en logP: {abs(lp - vlp):.6f}")
